@@ -4,17 +4,17 @@
 
 ## Spis treści
 
-- [Dynamiczna i statyczna linkowalność](#dynamiczna-i-statyczna-linkowalno--)
-- [Algorytm funkcji skrótu](#algorytm-funkcji-skr-tu)
-- [Uruchomienia i wyłączanie aplikacji](#uruchomienia-i-wy--czanie-aplikacji)
+- [Dynamiczna i statyczna linkowalność](#dynamiczna-i-statyczna-linkowalność)
+- [Algorytm funkcji skrótu](#algorytm-funkcji-skrótu)
+- [Uruchomienia i wyłączanie aplikacji](#uruchomienia-i-wyłączanie-aplikacji)
 - [Uprawnienia uruchomieniowe aplikacji](#uprawnienia-uruchomieniowe-aplikacji)
-- [Statystyki wydajnościowe działania](#statystyki-wydajno-ciowe-dzia-ania)
-- [Przypadki użycia](#przypadki-u-ycia)
+- [Statystyki wydajnościowe działania](#statystyki-wydajnościowe-działania)
+- [Przypadki użycia](#przypadki-użycia)
 - [Mechanizm kwarantanny](#mechanizm-kwarantanny)
-- [Czystość kodu i praktyki programistyczne](#czysto---kodu-i-praktyki-programistyczne)
+- [Czystość kodu i praktyki programistyczne](#czystość-kodu-i-praktyki-programistyczne)
 - [Statyczna analiza kodu](#statyczna-analiza-kodu)
 - [Testowanie aplikacji](#testowanie-aplikacji)
-- [Unikanie błędów bezpieczeństwa](#unikanie-b--d-w-bezpiecze-stwa)
+- [Unikanie błędów bezpieczeństwa](#unikanie-błędów-bezpieczeństwa)
 
 
 ### Dynamiczna i statyczna linkowalność
