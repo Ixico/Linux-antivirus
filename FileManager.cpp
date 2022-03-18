@@ -2,13 +2,13 @@
 #include "iostream"
 #include <fstream>
 #include <sstream>
-#include <vector>
-#include <bits/stdc++.h>
+#include <filesystem>
 using std::string;
-
+using std::filesystem::recursive_directory_iterator;
+using std::vector;
 const int DIGEST_LENGTH = 32;
 
-string readFile(string file_path){
+string readFileToString(string file_path){
     std::ifstream file;
     //TODO: uwaga na cwd
     file.open(file_path, std::ios::in);
@@ -33,5 +33,11 @@ std::unordered_set <string> readFileLines(string file_path){
     }
     file.close();
     return lines;
+}
+vector<string> findFilesInDirectory(string directory_path){
+    vector<string> files;
+    for (const auto& dirEntry : recursive_directory_iterator(directory_path))
+        if (dirEntry.is_regular_file()) files.push_back(dirEntry.path());
+    return files;
 }
 

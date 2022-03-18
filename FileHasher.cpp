@@ -8,6 +8,7 @@
 #include <openssl/md5.h>
 #include <sstream>
 #include <cstring>
+#include <iomanip>
 #include "FileManager.h"
 
 using std::string;
@@ -17,8 +18,9 @@ extern const int MD5_LENGTH;
 
 string hashToHexString(unsigned char *digest){
     std::stringstream ss;
+    ss << std::hex << std::setfill('0');
     for (int i=0; i < MD5_LENGTH; i++){
-        ss << std::hex << (int)digest[i];
+        ss << std::setw(2) << static_cast<unsigned>(digest[i]);
     }
     return ss.str();
 }
@@ -33,7 +35,7 @@ unsigned char * prepareContent(string content){
 string calculateFileHash(string file_name){
     unsigned char digest[MD5_LENGTH];
 
-    const string file_content = readFile(file_name);
+    const string file_content = readFileToString(file_name);
     const int content_length = file_content.length();
     const unsigned char * prepared_content = prepareContent(file_content);
 

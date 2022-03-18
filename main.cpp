@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <array>
-#include "FileHasher.h"
-#include "HashesDatabase.h"
+#include "FileController.h"
 #include <filesystem>
+#include <cstring>
+#include <string.h>
 
 using std::string;
 using std::cout;
@@ -17,16 +18,32 @@ using recursive_directory_iterator = std::filesystem::recursive_directory_iterat
 extern const int MD5_LENGTH = 16; //because its constant
 
 int main(int argc, char* argcv[]) {
-    if (argc != 2) {
-        cerr << "You need to specify exactly one argument - file name." << endl;
+    FileController controller("../hash_database.txt");    //TODO: sprawdz, czy plik istnieje - jak rozdzielic deklaracje od inicjalizacji?
+    //TODO: dodac rozpoznawanie inputu
+    if (argc != 3) {
+        cerr << "Invalid number of arguments! Usage:" << endl << "./Antivirus [-f or -d] [file or directory name]"<<endl;
         return -1;
+    } else if (string("-f") == argcv[1]) {
+        string file_path = argcv[2];
+        bool is_dangerous;
+        try {
+            is_dangerous = controller.isFileDangerous(file_path);
+        } catch (std::invalid_argument &e) {
+            cerr << e.what() << endl;
+            return -2;
+        }
+        if (is_dangerous) cout << "Don't open the file. It may be dangerous for your system!" << endl;
+        else cout << "File is considered to be safe." << endl;
+    } else if (string("-d") == argcv[1]) {
+        string directory_path = argcv[2];
+        vector<string> detected = controller.findDangerousFiles(directory_path);
+        for (const auto &file : detected){
+            cout << file << endl;
+        }
+    } else {
+        cerr << "Invalid specifier argument! Usage:" << endl << "./Antivirus [-f or -d] [file or directory name]"
+             << endl;
+        return -3;
     }
-    string file_path = argcv[1];
-    try {
-        cout << calculateFileHash(file_path) << endl;
-    } catch (std::invalid_argument &e) {
-        cerr << e.what();
-    }
-//    HashesDatabase database("hello");
     return 0;
 }

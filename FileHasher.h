@@ -7,7 +7,7 @@
 #define ANTIVIRUS_FILEHASHER_H
 
 std::string calculateFileHash(std::string file_name);
-
+std::string hashToHexString(unsigned char *digest);
 
 
 #endif //ANTIVIRUS_FILEHASHER_H
