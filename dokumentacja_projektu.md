@@ -107,7 +107,7 @@ bool HashesDatabase::isInDatabase(std::string digest) {
 ```
 Sugestia narzędzia **Clang-Tidy**
 
-![](/home/ixico/Pictures/Screenshot from 2022-03-17 23-51-59.png)
+![](https://github.com/Ixico/BSO-projekt/blob/master/Documentation%20resources/clang_tidy.png)
 
 Kod po zastosowaniu sugestii narzędzia **Clang-Tidy**:
 ```cpp
@@ -139,7 +139,7 @@ goodbye world
 ```
 
 ### Wszystkie możliwe scenariusze uruchomienia programu
-![](/home/ixico/Pictures/Screenshot from 2022-03-18 00-22-39.png)
+![](https://github.com/Ixico/BSO-projekt/blob/master/Documentation%20resources/basic_test.png)
 
 ## Unikanie błędów bezpieczeństwa
 
