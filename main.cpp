@@ -19,7 +19,7 @@ extern const int MD5_LENGTH = 16; //because its constant
 
 int main(int argc, char* argcv[]) {
     FileController controller("../hash_database.txt");    //TODO: sprawdz, czy plik istnieje - jak rozdzielic deklaracje od inicjalizacji?
-    //TODO: dodac rozpoznawanie inputu
+    //TODO: dodac rozpoznawanie inputu - sprawdzac czy directory
     if (argc != 3) {
         cerr << "Invalid number of arguments! Usage:" << endl << "./Antivirus [-f or -d] [file or directory name]"<<endl;
         return -1;

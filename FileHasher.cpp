@@ -27,7 +27,7 @@ string hashToHexString(unsigned char *digest){
 unsigned char * prepareContent(string content){
     //TODO: moze zamienic?
     unsigned char *prepared = new unsigned char[content.length()+1]; //dobra alokacja?
-    strcpy(reinterpret_cast<char *>(prepared), content.c_str()); //czy to rzutowanie jest dobre?
+    strcpy(reinterpret_cast<char *>(prepared), content.c_str()); //czy to rzutowanie jest dobre? na const unsigned
     return prepared;
 }
 
@@ -39,10 +39,8 @@ string calculateFileHash(string file_name){
     const int content_length = file_content.length();
     const unsigned char * prepared_content = prepareContent(file_content);
 
-    MD5(prepared_content, content_length,digest);
-
+    MD5(prepared_content, content_length,digest);//FIXME: to zly pomysl, podziel na kawalki, pomysl na jakie (zalecenia)
     delete[](prepared_content); // dobre zarzadzanie pamiecia?
 
     return hashToHexString(digest);
 }
-

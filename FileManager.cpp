@@ -17,7 +17,7 @@ string readFileToString(string file_path){
     buffer << file.rdbuf();
     string content = buffer.str(); //czy to czytanie z pliku jest ok?
     file.close(); //czy z bufferem tez sie cos robi?
-    buffer.clear();
+    buffer.clear();//wyczysci sie sam
     return content;
 }
 

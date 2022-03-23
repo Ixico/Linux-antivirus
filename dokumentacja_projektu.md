@@ -142,4 +142,3 @@ goodbye world
 ![](https://github.com/Ixico/BSO-projekt/blob/master/Documentation%20resources/basic_test.png)
 
 ## Unikanie błędów bezpieczeństwa
-
