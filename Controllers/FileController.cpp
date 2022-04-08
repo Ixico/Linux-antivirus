@@ -2,9 +2,9 @@
 // Created by ixico on 17.03.2022.
 //
 
-#include "FileController.h"
-#include "FileManager.h"
-#include "FileHasher.h"
+#include "../Headers/FileController.h"
+#include "../Headers/FileManager.h"
+#include "../Headers/FileHasher.h"
 #include <iostream>
 #include <vector>
 

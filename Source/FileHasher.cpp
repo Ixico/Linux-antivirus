@@ -2,14 +2,15 @@
 // Created by ixico on 17.03.2022.
 //
 
-#include "FileHasher.h"
-#include "FileHasher.h"
+#include "../Headers/FileHasher.h"
+#include "../Headers/FileHasher.h"
 #include <iostream>
 #include <openssl/md5.h>
 #include <sstream>
 #include <cstring>
 #include <iomanip>
-#include "FileManager.h"
+#include <fstream>
+#include "../Headers/FileManager.h"
 
 using std::string;
 extern const int MD5_LENGTH;
@@ -42,5 +43,20 @@ string calculateFileHash(string file_name){
     MD5(prepared_content, content_length,digest);//FIXME: to zly pomysl, podziel na kawalki, pomysl na jakie (zalecenia)
     delete[](prepared_content); // dobre zarzadzanie pamiecia?
 
+    return hashToHexString(digest);
+}
+
+string calculatePartially(string file_name){
+    MD5_CTX ctx;
+    MD5_Init(&ctx);
+
+    std::ifstream is(file_name);
+    char buf[4096];
+    do {
+        is.read(buf, sizeof(buf));
+        MD5_Update(&ctx, buf, is.gcount());
+    } while(is);
+    unsigned char digest[MD5_LENGTH];
+    MD5_Final(digest, &ctx);
     return hashToHexString(digest);
 }

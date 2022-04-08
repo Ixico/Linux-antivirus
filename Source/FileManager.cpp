@@ -1,4 +1,4 @@
-#include "FileManager.h"
+#include "../Headers/FileManager.h"
 #include "iostream"
 #include <fstream>
 #include <sstream>
@@ -12,7 +12,7 @@ string readFileToString(string file_path){
     std::ifstream file;
     //TODO: uwaga na cwd
     file.open(file_path, std::ios::in);
-    if (!file.is_open()) throw std::invalid_argument("File not found");
+    if (!file.is_open()) throw std::invalid_argument("File not found ex");
     std::stringstream buffer;
     buffer << file.rdbuf();
     string content = buffer.str(); //czy to czytanie z pliku jest ok?
@@ -24,7 +24,7 @@ string readFileToString(string file_path){
 std::unordered_set <string> readFileLines(string file_path){
     std::ifstream file;
     file.open(file_path,std::ios::in);
-    if (!file.is_open()) throw std::invalid_argument("File not found");
+    if (!file.is_open()) throw std::invalid_argument("File not found ex");
     string line;
     std::unordered_set<string> lines;
     for (int i=0; getline(file,line); i++){
