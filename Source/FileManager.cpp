@@ -1,29 +1,19 @@
 #include "../Headers/FileManager.h"
 #include "iostream"
 #include <fstream>
-#include <sstream>
 #include <filesystem>
+#include "../Headers/ConfigurationVariables.h"
 using std::string;
 using std::filesystem::recursive_directory_iterator;
 using std::vector;
 const int DIGEST_LENGTH = 32;
+using std::filesystem::path;
 
-string readFileToString(string file_path){
-    std::ifstream file;
-    //TODO: uwaga na cwd
-    file.open(file_path, std::ios::in);
-    if (!file.is_open()) throw std::invalid_argument("File not found ex");
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    string content = buffer.str(); //czy to czytanie z pliku jest ok?
-    file.close(); //czy z bufferem tez sie cos robi?
-    buffer.clear();//wyczysci sie sam
-    return content;
-}
 
-std::unordered_set <string> readFileLines(string file_path){
+//TODO manage file types and symlinks
+std::unordered_set <string> readDatabaseRecords(path file_path){
     std::ifstream file;
-    file.open(file_path,std::ios::in);
+    file.open(file_path);
     if (!file.is_open()) throw std::invalid_argument("File not found ex");
     string line;
     std::unordered_set<string> lines;
@@ -34,10 +24,45 @@ std::unordered_set <string> readFileLines(string file_path){
     file.close();
     return lines;
 }
-vector<string> findFilesInDirectory(string directory_path){
-    vector<string> files;
+
+void saveQuarantineRecords(vector<QuarantineRecord> records){
+    std::ofstream file;
+    file.open(QUARANTINE_LIST_PATH);
+    if (!file.is_open()) throw std::invalid_argument("File not found!");
+    for (const auto &record : records){
+        file << record.key << record.iv  <<  record.file_path << std::endl;
+    }
+    file.close();
+}
+
+//TODO: std::out_of_range exc
+vector<QuarantineRecord> readQuarantineRecords(){
+    std::ifstream file;
+    file.open(QUARANTINE_LIST_PATH);
+    if (!file.is_open()) throw std::invalid_argument("File not found listq");
+
+    vector<QuarantineRecord> records;
+
+    string line;
+    int length = 16;
+    for (int i=0; getline(file,line); i++){
+        std::string key;
+        std::string iv;
+        std::string file_path;
+
+        key = line.substr(0,length);
+        iv = line.substr(length,length);
+        file_path = line.substr(2*length, line.length()-2*length);
+
+        records.push_back(QuarantineRecord(file_path,key,iv));
+    }
+    file.close();
+    return records;
+}
+
+vector<path> findFilesInDirectory(path directory_path){
+    vector<path> files;
     for (const auto& dirEntry : recursive_directory_iterator(directory_path))
         if (dirEntry.is_regular_file()) files.push_back(dirEntry.path());
     return files;
 }
-

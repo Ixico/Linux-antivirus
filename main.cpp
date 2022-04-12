@@ -4,9 +4,9 @@
 #include "Headers/FileController.h"
 #include "Headers/FileHasher.h"
 #include <filesystem>
-#include <cstring>
-#include <string.h>
 #include "Headers/QuarantineController.h"
+#include "Headers/FileManager.h"
+#include <unistd.h>
 
 using std::string;
 using std::cout;
@@ -14,41 +14,22 @@ using std::endl;
 using std::vector;
 using std::array;
 using std::cerr;
-using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
+using std::filesystem::path;
 
 
 extern const int MD5_LENGTH = 16; //because its constant
 
+//TODO change
+//extern const path QUARANTINE_PATH = "/var/antivirus/quarantine/";
+extern const path QUARANTINE_PATH = "/home/ixico/Desktop/antivirus/quarantino_test";
+extern const path DATABASE_PATH = "/var/antivirus/database";
+//extern const path QUARANTINE_LIST_PATH = "/var/antivirus/list";
+extern const path QUARANTINE_LIST_PATH = "/home/ixico/Desktop/antivirus/quarantino_list";
+
+
 int main(int argc, char* argcv[]) {
-    FileController controller("../Resources/hash_database.txt");    //TODO: sprawdz, czy plik istnieje - jak rozdzielic deklaracje od inicjalizacji?
-    //TODO: dodac rozpoznawanie inputu - sprawdzac czy directory
-    if (argc != 3) {
-        cerr << "Invalid number of arguments! Usage:" << endl << "./Antivirus [-f or -d] [file or directory name]"<<endl;
-        return -1;
-    } else if (string("-f") == argcv[1]) {
-        string file_path = argcv[2];
-        bool is_dangerous;
-        try {
-            is_dangerous = controller.isFileDangerous(file_path);
-        } catch (std::invalid_argument &e) {
-            cerr << e.what() << endl;
-            return -2;
-        }
-        if (is_dangerous) cout << "Don't open the file. It may be dangerous for your system!" << endl;
-        else cout << "File is considered to be safe." << endl;
-    } else if (string("-d") == argcv[1]) {
-        string directory_path = argcv[2];
-        vector<string> detected = controller.findDangerousFiles(directory_path);
-        for (const auto &file : detected){
-            cout << file << endl;
-        }
-    } else {
-        cerr << "Invalid specifier argument! Usage:" << endl << "./Antivirus [-f or -d] [file or directory name]"
-             << endl;
-        return -3;
-    }
-    cout << calculatePartially("../Resources/dangerous_file.txt") << endl;
-    QuarantineController quarantineController("/home/ixico/Desktop/quarantino");
-    quarantineController.init();
+    QuarantineController quarantineController;
+//    quarantineController.useCipher("/home/ixico/Desktop/test3","/home/ixico/Desktop/etest3");
+    quarantineController.useCipher("/home/ixico/Desktop/etest4","/home/ixico/Desktop/dtest4v2");
     return 0;
 }

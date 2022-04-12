@@ -5,50 +5,48 @@
 #include "../Headers/QuarantineController.h"
 #include "openssl/aes.h"
 #include <filesystem>
+#include <openssl/rand.h>
+#include <fstream>
+#include <cstring>
+#include "../Headers/FileManager.h"
+
+using std::filesystem::path;
+extern const path QUARANTINE_PATH;
 
 
-QuarantineController::QuarantineController(std::string quarantine_path) {
-    this->quarantine_path = quarantine_path;
+void QuarantineController::imposeQuarantine(path file_path) {
+    if(!exists(file_path)) throw std::invalid_argument("File not found!");
+    std::string file_name = file_path.stem();
+    std::filesystem::path destination_path = QUARANTINE_PATH/file_name;
+//    QuarantineRecord record = encrypt(file_path,destination_path);
+//    quarantineRecords.push_back(record);
+    std::filesystem::remove(file_path);
 }
 
-void QuarantineController::init() {
-    std::cout << std::filesystem::create_directory(quarantine_path);
-
-}
-
-void QuarantineController::imposeQuarantine(std::string file_path) {
-
-}
-
-void QuarantineController::removeQuarantine(std::string) {
-
-}
-
-void QuarantineController::useCipher() {
+void QuarantineController::useCipher(path file_path, path destination_path) {
     int bytes_read, bytes_written;
     unsigned char indata[AES_BLOCK_SIZE];
     unsigned char outdata[AES_BLOCK_SIZE];
 
-    /* ckey and ivec are the two 128-bits keys necesary to
-       en- and recrypt your data.  Note that ckey can be
-       192 or 256 bits as well */
-    unsigned char ckey[] = "thiskeyisverybad";
+    unsigned char ckey[] = "thisisverybadkey";
+//    RAND_bytes(ckey, sizeof(ckey));
+
     unsigned char ivec[] = "dontusethisinput";
+//    RAND_bytes(ivec, sizeof(ivec));
 
-    /* data structure that contains the key itself */
     AES_KEY key;
-
-    /* set the encryption key */
     AES_set_encrypt_key(ckey, 128, &key);
 
-    /* set where on the 128 bit encrypted block to begin encryption*/
+    std::cout << ckey << std::endl;
+    std::cout << ivec << std::endl;
     int num = 0;
-    FILE *ifp = fopen("/home/ixico/Desktop/encrypted", "rb");
-    FILE *ofp = fopen("/home/ixico/Desktop/decrypted3", "wb");
+    std::cout << file_path.c_str();
+    std::cout << destination_path.c_str();
+    FILE *ifp = fopen(file_path.c_str(), "rb");
+    FILE *ofp = fopen(destination_path.c_str(), "wb");
 
     while (1) {
         bytes_read = fread(indata, 1, AES_BLOCK_SIZE, ifp);
-
         AES_cfb128_encrypt(indata, outdata, bytes_read, &key, ivec, &num,
                            AES_ENCRYPT);
 
@@ -59,6 +57,32 @@ void QuarantineController::useCipher() {
     }
 }
 
-void QuarantineController::moveFile(std::string file_name, std::string destination) {
+
+//TODO: set 0 permissions
+QuarantineController::QuarantineController() {
+    std::filesystem::create_directories(QUARANTINE_PATH);
+    quarantineRecords = readQuarantineRecords();
+}
+
+void QuarantineController::removeQuarantine(std::string file_name) {
+    int position = 0;
+    for (const auto &item : quarantineRecords){
+        if (item.file_path.stem() == file_name)
+            break;
+        position++;
+    }
+    QuarantineRecord temp = quarantineRecords.at(position);
+    quarantineRecords.erase(quarantineRecords.begin() + position);
 
 }
+
+std::string QuarantineController::convertToString(unsigned char* a, int size)
+{
+    int i;
+    std::string s;
+    for (i = 0; i < size; i++) {
+        s.push_back(a[i]);
+    }
+    return s;
+}
+

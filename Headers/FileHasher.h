@@ -8,7 +8,6 @@
 
 std::string calculateFileHash(std::string file_name);
 std::string hashToHexString(unsigned char *digest);
-std::string calculatePartially(std::string file_name);
 
 
 #endif //ANTIVIRUS_FILEHASHER_H

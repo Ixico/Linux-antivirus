@@ -16,7 +16,7 @@ using std::string;
 extern const int MD5_LENGTH;
 
 
-
+//TODO: consider other options for digest
 string hashToHexString(unsigned char *digest){
     std::stringstream ss;
     ss << std::hex << std::setfill('0');
@@ -25,28 +25,9 @@ string hashToHexString(unsigned char *digest){
     }
     return ss.str();
 }
-unsigned char * prepareContent(string content){
-    //TODO: moze zamienic?
-    unsigned char *prepared = new unsigned char[content.length()+1]; //dobra alokacja?
-    strcpy(reinterpret_cast<char *>(prepared), content.c_str()); //czy to rzutowanie jest dobre? na const unsigned
-    return prepared;
-}
 
 
 string calculateFileHash(string file_name){
-    unsigned char digest[MD5_LENGTH];
-
-    const string file_content = readFileToString(file_name);
-    const int content_length = file_content.length();
-    const unsigned char * prepared_content = prepareContent(file_content);
-
-    MD5(prepared_content, content_length,digest);//FIXME: to zly pomysl, podziel na kawalki, pomysl na jakie (zalecenia)
-    delete[](prepared_content); // dobre zarzadzanie pamiecia?
-
-    return hashToHexString(digest);
-}
-
-string calculatePartially(string file_name){
     MD5_CTX ctx;
     MD5_Init(&ctx);
 
@@ -60,3 +41,4 @@ string calculatePartially(string file_name){
     MD5_Final(digest, &ctx);
     return hashToHexString(digest);
 }
+
