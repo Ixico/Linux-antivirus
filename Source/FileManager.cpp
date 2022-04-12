@@ -25,39 +25,32 @@ std::unordered_set <string> readDatabaseRecords(path file_path){
     return lines;
 }
 
-void saveQuarantineRecords(vector<QuarantineRecord> records){
+void saveQuarantinePaths(vector<std::filesystem::path> paths){
     std::ofstream file;
     file.open(QUARANTINE_LIST_PATH);
     if (!file.is_open()) throw std::invalid_argument("File not found!");
-    for (const auto &record : records){
-        file << record.key << record.iv  <<  record.file_path << std::endl;
+    for (const auto &path : paths){
+        file << path << std::endl;
     }
     file.close();
 }
 
 //TODO: std::out_of_range exc
-vector<QuarantineRecord> readQuarantineRecords(){
+vector<std::filesystem::path> readQuarantinePaths(){
     std::ifstream file;
     file.open(QUARANTINE_LIST_PATH);
     if (!file.is_open()) throw std::invalid_argument("File not found listq");
 
-    vector<QuarantineRecord> records;
+    vector<std::filesystem::path> paths;
 
     string line;
-    int length = 16;
-    for (int i=0; getline(file,line); i++){
-        std::string key;
-        std::string iv;
-        std::string file_path;
-
-        key = line.substr(0,length);
-        iv = line.substr(length,length);
-        file_path = line.substr(2*length, line.length()-2*length);
-
-        records.push_back(QuarantineRecord(file_path,key,iv));
+    while(getline(file,line)){
+        line.erase(std::remove(line.begin(),line.end(),'\"'),line.end());//remove quotation marks
+        path p = line;
+        paths.push_back(p);
     }
     file.close();
-    return records;
+    return paths;
 }
 
 vector<path> findFilesInDirectory(path directory_path){

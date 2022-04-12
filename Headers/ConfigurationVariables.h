@@ -6,6 +6,9 @@
 #define ANTIVIRUS_CONFIGURATIONVARIABLES_H
 
 #define QUARANTINE_LIST_PATH "/home/ixico/Desktop/antivirus/quarantino_list"
-#define QUARANTINE_PATH "/home/ixico/Desktop/antivirus/quarantino_test"
+#define QUARANTINE_PATH "/home/ixico/Desktop/antivirus/quarantino_test/"
+
+#define KEY "thisisverybadkey"
+#define IV "dontusethisinput"
 
 #endif //ANTIVIRUS_CONFIGURATIONVARIABLES_H

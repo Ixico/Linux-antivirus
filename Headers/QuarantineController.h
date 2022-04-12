@@ -10,6 +10,7 @@
 #include <vector>
 #include "../QuarantineRecord.h"
 
+
 class QuarantineController {
 public:
 
@@ -18,14 +19,11 @@ public:
     void imposeQuarantine(std::filesystem::path file_path);
     //TODO: to be considered
     void removeQuarantine(std::string file_name);
-    void useCipher(std::filesystem::path file_path, std::filesystem::path destination_path);
+    void saveQuarantineList();
 private:
-    std::vector<QuarantineRecord> quarantineRecords;
-    std::filesystem::path quarantine_path;
+    std::vector<std::filesystem::path> quarantine_records;
     const int AES_BLOCK_SIZE = 16;
-
-    std::string convertToString(unsigned char* a, int size);
-
+    void useCipher(std::filesystem::path file_path, std::filesystem::path destination_path);
 };
 
 
