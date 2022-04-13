@@ -10,15 +10,17 @@
 #include <cstring>
 #include "../Headers/FileManager.h"
 #include "../Headers/ConfigurationVariables.h"
+#include <openssl/sha.h>
 
 using std::filesystem::path;
 
 
 void QuarantineController::imposeQuarantine(path file_path) {
     if(!exists(file_path)) throw std::invalid_argument("File not found!");//check if file exists
+    if(!std::filesystem::is_regular_file(file_path)) throw std::invalid_argument("File is not regular!");
     std::string file_name = file_path.stem();//get file name
     std::filesystem::path destination_path = QUARANTINE_PATH + file_name;//create new path
-    useCipher(file_path,destination_path);//encrypt file
+//    useCipher(file_path,destination_path);//encrypt file
     std::filesystem::remove(file_path);//remove from current location
     quarantine_records.push_back(file_path);//save source path
 }
@@ -35,7 +37,7 @@ void QuarantineController::removeQuarantine(std::string file_name) {
     }
     if (!found) throw std::invalid_argument("File is not on quarantine!");
     path destination = quarantine_records.at(position);
-    useCipher(QUARANTINE_PATH+file_name,destination);
+//    useCipher(QUARANTINE_PATH+file_name,destination);
     std::filesystem::remove(QUARANTINE_PATH+file_name);
     quarantine_records.erase(quarantine_records.begin() + position);
 }
@@ -44,16 +46,20 @@ void QuarantineController::removeQuarantine(std::string file_name) {
 
 
 
-void QuarantineController::useCipher(path file_path, path destination_path) {
+void QuarantineController::useCipher(path file_path, path destination_path, std::string password) {
     int bytes_read, bytes_written;
     unsigned char indata[AES_BLOCK_SIZE];
     unsigned char outdata[AES_BLOCK_SIZE];
 
-    unsigned char ckey[] = KEY;
-//    RAND_bytes(ckey, sizeof(ckey));
 
-    unsigned char ivec[] = IV;
-//    RAND_bytes(ivec, sizeof(ivec));
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    unsigned char *prepared = new unsigned char[password.length()]; //dobra alokacja?
+    strcpy(reinterpret_cast<char *>(prepared), password.c_str()); //czy to rzutowanie jest dobre?
+    SHA256(prepared,password.length(),hash);
+    unsigned char ckey[16];
+    unsigned char ivec[16];
+    std::copy(std::begin(hash),std::begin(hash)+16,ckey);
+    std::copy(std::begin(hash)+16,std::end(hash),ivec);
 
     AES_KEY key;
     AES_set_encrypt_key(ckey, 128, &key);

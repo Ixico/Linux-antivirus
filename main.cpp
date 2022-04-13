@@ -29,9 +29,6 @@ extern const path QUARANTINE_LIST_PATH = "/home/ixico/Desktop/antivirus/quaranti
 
 int main(int argc, char* argcv[]) {
     QuarantineController quarantineController;
-    path file = "/home/ixico/Desktop/qtest";
-//    quarantineController.imposeQuarantine("////ads");
-//    quarantineController.removeQuarantine("qtest");
-//    quarantineController.saveQuarantineList();
+    quarantineController.useCipher("/home/ixico/Desktop/qtestdest","/home/ixico/Desktop/qtestgood","pogchamp");
     return 0;
 }
