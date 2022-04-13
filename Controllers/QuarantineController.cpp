@@ -11,42 +11,51 @@
 #include "../Headers/FileManager.h"
 #include "../Headers/ConfigurationVariables.h"
 #include <openssl/sha.h>
+#include "../Headers/FileHasher.h"
 
 using std::filesystem::path;
-
+using std::string;
 
 void QuarantineController::imposeQuarantine(path file_path) {
     if(!exists(file_path)) throw std::invalid_argument("File not found!");//check if file exists
     if(!std::filesystem::is_regular_file(file_path)) throw std::invalid_argument("File is not regular!");
     std::string file_name = file_path.stem();//get file name
     std::filesystem::path destination_path = QUARANTINE_PATH + file_name;//create new path
-//    useCipher(file_path,destination_path);//encrypt file
+    std::cout <<"impose: " << calculateFileHash(file_path) << std::endl;
+    quarantine_records.push_back(QuarantineRecord(file_path, calculateFileHash(file_path)));//save source path and hash
+    useCipher(file_path,destination_path);//encrypt file
     std::filesystem::remove(file_path);//remove from current location
-    quarantine_records.push_back(file_path);//save source path
 }
 
-void QuarantineController::removeQuarantine(std::string file_name) {
+bool QuarantineController::removeQuarantine(std::string file_name) {
     int position = 0;
     bool found = false;
     for (const auto &item : quarantine_records){
-        if (item.stem() == file_name){
+        if (item.file_path.stem() == file_name){
             found = true;
             break;
         }
         position++;
     }
     if (!found) throw std::invalid_argument("File is not on quarantine!");
-    path destination = quarantine_records.at(position);
-//    useCipher(QUARANTINE_PATH+file_name,destination);
-    std::filesystem::remove(QUARANTINE_PATH+file_name);
-    quarantine_records.erase(quarantine_records.begin() + position);
+    QuarantineRecord record = quarantine_records.at(position);
+    useCipher(QUARANTINE_PATH+file_name,record.file_path);
+    std::cout << "remove: " << calculateFileHash(record.file_path) << std::endl;
+    std::cout << "remove: " << record.digest << std::endl;
+    if (calculateFileHash(record.file_path) == record.digest) {
+        std::filesystem::remove(QUARANTINE_PATH+file_name);
+        quarantine_records.erase(quarantine_records.begin() + position);
+        return true;
+    }
+    std::filesystem::remove(record.file_path);
+    return false;
 }
 
 
 
 
 
-void QuarantineController::useCipher(path file_path, path destination_path, std::string password) {
+void QuarantineController::useCipher(path file_path, path destination_path) {
     int bytes_read, bytes_written;
     unsigned char indata[AES_BLOCK_SIZE];
     unsigned char outdata[AES_BLOCK_SIZE];
@@ -78,19 +87,22 @@ void QuarantineController::useCipher(path file_path, path destination_path, std:
             break;
 
     }
+    fclose(ifp);
+    fclose(ofp);
 }
 
+
+
+void QuarantineController::saveQuarantineRecords() {
+    ::saveQuarantineRecords(quarantine_records);
+
+}
 
 //TODO: set 0 permissions
-QuarantineController::QuarantineController() {
+QuarantineController::QuarantineController(const string &password) : password(password) {
     std::filesystem::create_directories(QUARANTINE_PATH);
     if (std::filesystem::exists(QUARANTINE_LIST_PATH))
-        quarantine_records = readQuarantinePaths();
-}
-
-void QuarantineController::saveQuarantineList() {
-    saveQuarantinePaths(quarantine_records);
-
+        quarantine_records = readQuarantineRecords();
 }
 
 

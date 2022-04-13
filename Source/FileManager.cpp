@@ -25,32 +25,31 @@ std::unordered_set <string> readDatabaseRecords(path file_path){
     return lines;
 }
 
-void saveQuarantinePaths(vector<std::filesystem::path> paths){
+void saveQuarantineRecords(vector<QuarantineRecord> records){
     std::ofstream file;
     file.open(QUARANTINE_LIST_PATH);
     if (!file.is_open()) throw std::invalid_argument("File not found!");
-    for (const auto &path : paths){
-        file << path << std::endl;
+    for (const auto &record : records){
+        file << record.file_path << ' ' << record.digest << std::endl;
     }
     file.close();
 }
 
 //TODO: std::out_of_range exc
-vector<std::filesystem::path> readQuarantinePaths(){
+vector<QuarantineRecord> readQuarantineRecords(){
     std::ifstream file;
     file.open(QUARANTINE_LIST_PATH);
     if (!file.is_open()) throw std::invalid_argument("File not found listq");
 
-    vector<std::filesystem::path> paths;
+    vector<QuarantineRecord> records;
 
     string line;
-    while(getline(file,line)){
-        line.erase(std::remove(line.begin(),line.end(),'\"'),line.end());//remove quotation marks
-        path p = line;
-        paths.push_back(p);
+    QuarantineRecord temp;
+    while (file >> temp.file_path >> temp.digest) {
+        records.push_back(temp);
     }
     file.close();
-    return paths;
+    return records;
 }
 
 vector<path> findFilesInDirectory(path directory_path){
