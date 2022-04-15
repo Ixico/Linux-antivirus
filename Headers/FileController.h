@@ -11,8 +11,9 @@
 
 class FileController {
 public:
-     explicit FileController(std::filesystem::path database_path);
-     bool isFileDangerous(std::filesystem::path file_path);
+    FileController();
+    void init();
+    bool isFileDangerous(std::filesystem::path file_path);
      std::vector<std::filesystem::path> findDangerousFiles(std::filesystem::path directory_path);
 
 private:

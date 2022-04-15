@@ -14,17 +14,19 @@
 class QuarantineController {
 public:
 
-    QuarantineController(const std::string &password);
-
+    QuarantineController();
+    void init();
     void imposeQuarantine(std::filesystem::path file_path);
-    //TODO: to be considered
     bool removeQuarantine(std::string file_name);
     void saveQuarantineRecords();
-    void useCipher(std::filesystem::path file_path, std::filesystem::path destination_path);
+
+    void setPassword(const std::string &password);
+
 private:
     std::vector<QuarantineRecord> quarantine_records;
     const int AES_BLOCK_SIZE = 16;
     std::string password;
+    void useCipher(std::filesystem::path file_path, std::filesystem::path destination_path);
 };
 
 

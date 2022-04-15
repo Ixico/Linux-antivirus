@@ -7,6 +7,7 @@
 #include "Headers/QuarantineController.h"
 #include "Headers/FileManager.h"
 #include <unistd.h>
+#include "Headers/CLIController.h"
 
 using std::string;
 using std::cout;
@@ -28,10 +29,61 @@ extern const path QUARANTINE_LIST_PATH = "/home/ixico/Desktop/antivirus/quaranti
 
 
 int main(int argc, char* argcv[]) {
-    QuarantineController quarantineController("pogchamp");
+    CLIController cli_controller;
+    FileController file_controller;
+    QuarantineController quarantine_controller;
+//    cout << getlogin();
+    try {
+        file_controller.init();
+        quarantine_controller.init();
+    } catch (std::exception &e){
+        cli_controller.printInitFailure();
+        return EXIT_FAILURE;
+    }
 
-//    quarantineController.imposeQuarantine("/home/ixico/Desktop/abcd");
-    cout << quarantineController.removeQuarantine("abcd");
-    quarantineController.saveQuarantineRecords();
+    if (argc == 1) {
+        cli_controller.printWelcomePage();
+        return EXIT_SUCCESS;
+    }
+
+    if (argcv[1] == string("-scanf")){
+        //print sth
+        if (argc != 3) return EXIT_FAILURE;
+        path file_path = argcv[2];
+        try {
+            file_controller.isFileDangerous(file_path) ? cli_controller.printDangerous() : cli_controller.printSafe();
+        } catch (std::exception &e) {
+
+        }
+    }
+
+    if (argcv[1] == string("-scand")){
+        //print sth
+        if (argc != 3) return EXIT_FAILURE;
+        path directory_path = argcv[2];
+        try {
+            vector<path> dangerous;
+            dangerous = file_controller.findDangerousFiles(directory_path);
+            cli_controller.printDangerous(dangerous);
+        } catch (std::exception &e) {
+
+        }
+    }
+
+    else if (argcv[1] == string("-quarantine")){
+
+    }
+
+    else if (argcv[1] == string("-restore")){
+
+    }
+
+    else {
+        //print sth
+        return EXIT_FAILURE;
+    }
+    cli_controller.printHelp();
+
+
     return 0;
 }

@@ -16,6 +16,7 @@
 using std::filesystem::path;
 using std::string;
 
+//TODO: set 0 permissions
 void QuarantineController::imposeQuarantine(path file_path) {
     if(!exists(file_path)) throw std::invalid_argument("File not found!");//check if file exists
     if(!std::filesystem::is_regular_file(file_path)) throw std::invalid_argument("File is not regular!");
@@ -98,8 +99,17 @@ void QuarantineController::saveQuarantineRecords() {
 
 }
 
-//TODO: set 0 permissions
-QuarantineController::QuarantineController(const string &password) : password(password) {
+
+
+void QuarantineController::setPassword(const string &password) {
+    QuarantineController::password = password;
+}
+
+QuarantineController::QuarantineController() {
+
+}
+
+void QuarantineController::init() {
     std::filesystem::create_directories(QUARANTINE_PATH);
     if (std::filesystem::exists(QUARANTINE_LIST_PATH))
         quarantine_records = readQuarantineRecords();

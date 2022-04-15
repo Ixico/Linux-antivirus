@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <filesystem>
+#include "../Headers/ConfigurationVariables.h"
 
 using std::string;
 using std::unordered_set;
@@ -16,7 +17,7 @@ using std::filesystem::path;
 unordered_set <std::string> hashes;
 
 bool FileController::isFileDangerous(path file_path) {
-    if (!std::filesystem::is_regular_file(file_path)) throw std::invalid_argument("File is not regular one!");
+
     string digest = calculateFileHash(file_path);
     return hashes.find(digest) != hashes.end();
 }
@@ -30,6 +31,10 @@ vector<path> FileController::findDangerousFiles(path directory_path){
     return dangerous_files;
 }
 
-FileController::FileController(path database_path) {
-    hashes = readDatabaseRecords(database_path);
+
+FileController::FileController() {
+}
+
+void FileController::init() {
+    hashes = readDatabaseRecords(DATABASE_PATH);
 }

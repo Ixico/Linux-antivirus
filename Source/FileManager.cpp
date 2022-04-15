@@ -3,6 +3,7 @@
 #include <fstream>
 #include <filesystem>
 #include "../Headers/ConfigurationVariables.h"
+#include <sys/statfs.h>
 using std::string;
 using std::filesystem::recursive_directory_iterator;
 using std::vector;
@@ -52,9 +53,26 @@ vector<QuarantineRecord> readQuarantineRecords(){
     return records;
 }
 
+//todo check filesystem and follow symlinks and skip permission denied
 vector<path> findFilesInDirectory(path directory_path){
     vector<path> files;
     for (const auto& dirEntry : recursive_directory_iterator(directory_path))
         if (dirEntry.is_regular_file()) files.push_back(dirEntry.path());
     return files;
+}
+
+path followSymlinks(path file_name){
+    path target;
+    target = file_name;
+    while (std::filesystem::is_symlink(target)){
+        target = std::filesystem::read_symlink(target);
+    }
+    return target;
+}
+
+bool inRightFilesystem(path file_path){
+    struct statfs buf;
+
+    if (statfs(file_path.string().c_str(),&buf) == -1) throw std::invalid_argument("Cannot check file's filesystem!");
+    return buf.f_type == 61267;
 }

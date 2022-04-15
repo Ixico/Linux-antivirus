@@ -14,4 +14,6 @@ std::unordered_set <std::string> readDatabaseRecords(std::filesystem::path file_
 std::vector<std::filesystem::path> findFilesInDirectory(std::filesystem::path directory_path);
 void saveQuarantineRecords(std::vector<QuarantineRecord> records);
 std::vector<QuarantineRecord> readQuarantineRecords();
+bool inRightFilesystem(std::filesystem::path file_path);
+std::filesystem::path followSymlinks(std::filesystem::path file_name)
 #endif //ANTIVIRUS_FILEMANAGER_H
